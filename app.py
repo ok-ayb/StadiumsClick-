@@ -54,7 +54,9 @@ def login():
             return render_template('home.html', msg=msg)
         
     return render_template('login.html', msg=msg)
-        
+
+#pfa 
+#------------------------------------------------------
 
 
 @app.route('/addTer')
