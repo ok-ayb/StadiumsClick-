@@ -14,71 +14,81 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                   <ul class="navbar-nav mr-auto">
                       <li class="nav-item active">
-                          <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+                          <a class="nav-link" href="/">Acceu<span class="sr-only">(current)</span></a>
                       </li>
                       <li class="nav-item">
-                          <a class="nav-link" href="/terrain">Stadiums</a>
+                          <a class="nav-link" href="/terrain">tairrains</a>
                       </li>
                   </ul>
                   <ul class="navbar-nav">
                       <li class="nav-item">
-                          <a class="nav-link" href="/login">Login</a>
+                          <a class="nav-link" href="/login">connecter</a>
                       </li>
                       <li class="nav-item">
-                          <a class="nav-link" href="/signeUp">Register</a>
+                          <a class="nav-link" href="/signeUp">inscription</a>
                       </li>
                   </ul>
                 </div>
               </nav>    
-        <div id="image">
-            <img src="static/Lukaku-PNG-Free-File-Download.png" alt="football player png">
-        </div>
-        
         <div class="container">
-            <form method="POST">
-                <h3 align="center">Sign Up</h3>
+            
+            <form method="POST" action="/signeUp">
+                <h3 align="center">Inscription</h3>
+            </hr>
+            {% if errors is defined %}
+            <div class="alert alert-danger" role="alert">
+                {% for error in errors %}
+                <p >{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+            {% if msg is defined %}
+            <div class="alert alert-success" role="alert">
+                <p >{{ msg }}</p>
+              </div>
+            {% endif %}
                 <div class="form-group">
-                  <center><label for="email">Email Address</label></center>
+                  <center><label for="email">adresse email </label></center>
                   <input
                     type="email"
                     class="form-control"
                     id="email"
                     name="email"
-                    placeholder="Enter email"
+                    placeholder="entrer votre adresse email "
                   />
                 </div>
                 <div class="form-group">
-                  <center><label for="firstName">First Name</label></center>
+                  <center><label for="firstName">nom</label></center>
                   <input
                     type="text"
                     class="form-control"
                     id="firstName"
-                    name="firstName"
-                    placeholder="Enter first name"
+                    name="nom"
+                    placeholder="entrer votre nom complete"
                   />
                 </div>
                 <div class="form-group">
-                  <center><label for="password1">Password</label></center>
+                  <center><label for="password1">mot de passe</label></center>
                   <input
                     type="password"
                     class="form-control"
                     id="password1"
                     name="password1"
-                    placeholder="Enter password"
+                    placeholder="entrer votre mot de passe ici "
                   />
                 </div>
                 <div class="form-group">
-                  <center><label for="password2">Password (Confirm)</label></center>
+                  <center><label for="password2">confirmer votre mot de passe</label></center>
                   <input
                     type="password"
                     class="form-control"
                     id="password2"
                     name="password2"
-                    placeholder="Confirm password"
+                    placeholder="confirmer votre mot de passe ici "
                   />
                 </div>
                 <br />
-                <center><button type="submit" class="btn btn-primary">Submit</button></center>
+                <center><button type="submit" class="btn btn-primary">envoyer</button></center>
               </form>
 
         </div>

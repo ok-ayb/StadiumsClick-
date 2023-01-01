@@ -1,19 +1,19 @@
-from flask import Flask, render_template, request, session
+from flask import Flask, render_template, request, session,  redirect
 from flask_mysqldb import MySQL
+import MySQLdb.cursors
+from flask_bcrypt import Bcrypt
 
 app = Flask(__name__)
+app.secret_key = "super secret key"
+bcrypt = Bcrypt(app)
 
 app.config['MYSQL_HOST'] = "localhost"
 app.config['MYSQL_USER'] = "root"
 app.config['MYSQL_PASSWORD'] = ""
 app.config['MYSQL_DB'] = "stadiumsclick"
+
 mysql=MySQL(app)
 
-
-@app.route('/')
-@app.route('/home')
-def home_page():
-    return render_template('home.html',username=session['username'])
 
 @app.route('/terrain')
 def ter_page():
@@ -24,9 +24,41 @@ def ter_page():
     ]
     return render_template("ter.html",items=items)
 
-@app.route('/signeUp')
+@app.route('/signeUp',methods=['POST','GET'])
 def signeUp_page():
-    return render_template("signeUp.html")
+    #check if user is connected
+    if session.get('loggedin', False) == True:
+        return  redirect("/addTer")
+    errors=[]
+    if request.method == 'GET':
+        return render_template("signeUp.html")
+    else:
+        email = request.form['email']
+        nom = request.form['nom']
+        password = request.form['password1']
+        password_confirm = request.form['password2']
+        #validation des données 
+        if email == '':
+            errors.append("SVP entrer votre mail")
+        if nom == '':
+            errors.append("SVP entrer votre nom")
+        if password == '':
+            errors.append("SVP entrer votre mot de passe")
+        if password_confirm == '':
+            errors.append("SVP confirmer votre mot de passe")
+        if len(errors)>0 : 
+            return render_template("signeUp.html",errors=errors)
+        #hash password 
+        password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
+        #Connection with DB
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('INSERT INTO users VALUES (NULL, % s, % s, % s)', (nom, email, password_hash))
+        mysql.connection.commit()
+            #displaying message
+        msg = 'You have successfully registered !'
+        
+        
+        return render_template("Login.html",msg=msg)
 
 
 @app.route('/club')
@@ -35,30 +67,47 @@ def club_page():
 
 @app.route('/Login',methods=['GET','POST'])
 def login():
-    msg = ''
-    if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
-        # Create variables for easy access
-        username = request.form['username']
-        password = request.form['password']
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT * FROM login WHERE user_name = %s AND password = %s', (username, password,))
-        users = cursor.fetchone()
-        if users:
-            session['loggedin'] = True
-            session['user_name'] = users['username']
-            session['password'] = users['password']
-            # Redirect to home page
-            return 'Logged in successfully!'
-        else:
-            msg = 'Incorrect username/password!'
-            return render_template('home.html', msg=msg)
-        
-    return render_template('login.html', msg=msg)
+    #check if user is connected
+    if session.get('loggedin', False) == True:
+        return  redirect("/addTer")
 
-#pfa 
-#------------------------------------------------------
+    errors = []
+    if request.method == 'GET':
+        return render_template("Login.html")
+    else:
+        email = request.form['email']
+        password = request.form['password']   
+    #verification des donnée 
+    if email == '':
+        errors.append("SVP entrer votre mail")
+    if password == '':
+        errors.append("SVP entrer votre mot de passe")
+    if len(errors)>0 : 
+            return render_template("Login.html",errors=errors)
+    #connection with DB
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('SELECT * FROM users WHERE email = % s', [email])
+    user = cursor.fetchone()
+    if user and bcrypt.check_password_hash(user['password'], password):
+            session['loggedin'] = True
+            session['id'] = user['id']
+            session['email'] = user['email']
+            msg = 'Logged in successfully !'
+            return redirect('/addTer')
+    else:
+            msg = 'Incorrect username / password !'
+    return render_template('Login.html', msg = msg)
 
 
 @app.route('/addTer')
 def add_Ter():
+    if session.get('loggedin', False) == False:
+        return  redirect("/Login")
     return render_template("addTerrain.html")
+
+@app.route('/logOut',methods=['GET','POST'])
+def logout():
+    session.pop('loggedin',None)
+    session.pop('id',None)
+    session.pop('email',None)
+    return redirect('/Login')
