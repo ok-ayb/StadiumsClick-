@@ -1,0 +1,110 @@
+<html>
+    <head></head>
+    <body>
+<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">StadiumsClick</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+              <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link" href="/Addter">Ajouter Un terrain</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/Listter">liste des terrains</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/Listter">Créé une reservation</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/Listter">Créé une Post</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav">
+          <li class="nav-item">
+              <a class="nav-link" href="/logOut">logout</a>
+          </li>
+      </ul>
+    </div>
+  </nav>
+  
+  <style>
+    /* navbar */
+    #navbar
+            {
+                height: 90px;
+                width: 100%;
+                position: absolute;
+                top: 0;
+                left: 0;
+                background: #fdfefe;
+                display: grid;
+                place-items: center;
+            }
+            #navbar ul
+            {
+                list-style: none;
+                display: flex;
+                flex-direction: row;
+            }
+            #navbar ul li
+            {
+                font-size: 20px;
+                margin: 0 45px;
+            }
+            #navbar ul li a
+            {
+                text-decoration: none;
+                color: #000;
+            }
+            #navbar ul li a:hover
+            {
+                color: #165397;
+            }
+            /* login button */
+            #navbar ul #login
+            {
+                height: 50px;
+                width: 120px;
+                position: absolute;
+                top: 20px;
+                right: 7%;
+                display: grid;
+                place-items: center;
+                background: #165397;
+                border-radius: 10px 20px;
+            }
+            #navbar ul #login a
+            {
+                color: #e9e9eb;
+            }
+            #navbar ul #login:hover
+            {
+                background: #000;
+            }
+            /* image */
+            #image
+            {
+                position: absolute;
+                top: calc(50% - 300px);
+                right: 5%;
+                z-index: 999;
+            }
+            #image img
+            {
+                height: 600px;
+                filter: drop-shadow(-140px -140px 5px rgba(0,0,0,0.5));
+                transition: 0.5s;
+            }
+            #image img:hover
+            {
+                filter: drop-shadow(0px 0px 5px rgba(0,0,0,0.5));
+            
+            }
+  </style>
+  </body>
+  </html>

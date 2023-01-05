@@ -64,83 +64,40 @@
             </div>
           </nav>
           <div class="test">
-            <form action="/addTer" method="POST" enctype="multipart/form-data">
+            <form action="/addPost" method="POST">
                 {% if errors is defined %}
-            <div class="alert alert-danger" role="alert">
-                {% for error in errors %}
-                <p >{{ error }}</p>
-                {% endfor %}
-              </div>
-            {% endif %}
-            {% if msg is defined %}
-            <div class="alert alert-success" role="alert">
-                <p >{{ msg }}</p>
-              </div>
-            {% endif %}
+                <div class="alert alert-danger" role="alert">
+                    {% for error in errors %}
+                    <p >{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+                {% if msg is defined %}
+                <div class="alert alert-success" role="alert">
+                    <p >{{ msg }}</p>
+                  </div>
+                {% endif %}
                 <div class="container">
-                        <h3 class="section-title">Ajouter Un Tairrain</h3>
+                        <h3 class="section-title">Créé  Un Post</h3>
                         <hr>
-        
-                            
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                  <span class="input-group-text" id="inputGroupFileAddon01">choisir</span>
-                                </div>
-                                <div class="custom-file">
-                                  <input type="file" class="custom-file-input" id="inputGroupFile01"
-                                    aria-describedby="inputGroupFileAddon01" name="file">
-                                  <label class="custom-file-label" for="inputGroupFile01">selectionner une image</label>
-                                </div>
-                              </div>
-                            
-                
-                        <div class="form-group">
-                          <center><label for="email">nom</label></center>
-                          <input
-                            type="text"
-                            class="form-control"
-                            id="username"
-                            name="nom"
-                            placeholder="entrer le nom de tairrain"
-                          />
-                        </div>
-                        <div class="form-gsroup">
-                          <center><label for="password">adresse</label></center>
-                          <input
-                            type="text"
-                            class="form-control"
-                            id="password"
-                            name="adresse"
-                            placeholder="entrer l adresse du tairrain"
-                          />
-                        </div>
-                        <div>
-                        <center><label for="password">Villes</label></center>
-                        <center>
-                        <select select class="selectpicker" data-width="100%" name="ville">
-                            <option selected>Ville</option>
-                            <option value="Marrakech">Marrakech</option>
-                            <option value="casablanca">casablanca</option>
-                            <option value="laayoune">laayoune</option>
-                          </select>
-                          </center>
-                          </div>
-                          <div class="form-group">
-                            <center><label for="password">prix</label></center>
-                            <input
-                              type="number"
-                              class="form-control"
-                              id="password"
-                              name="prix"
-                              placeholder="entrer le prix de reservation du tairrain"
-                            />
-                          </div>
                           <div class="form-group">
                             <label for="exampleFormControlTextarea1">description</label>
                             <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="description"></textarea>
                           </div>
+                        <div>
+                        <center><label>nom de reservation</label></center>
+                        <center>
+                        <select select class="selectpicker" data-width="100%" name="reservation">
+                            <option selected>nom Reservation</option>
+                            {% for res in liste %}
+                            <option value="{{ res['id'] }}">{{ res['nom'] }}</option>
+                            {% endfor %}
+                          </select>
+                          </center>
+                          </div>
+                          
                         <br/>
-                        <Center><button type="submit" class="btn btn-primary" value="ajouter un tairrain">Ajouter un tairrain</button></Center>
+                        <Center><button type="submit" class="btn btn-primary" value="Cree un Poste">Cree un poste</button></Center>
                     </div>
                 </form>
              
@@ -307,6 +264,26 @@
             {
                 color: #1b66bb;
             }
+            /* pagination */
+            #pagination
+            {
+                position: absolute;
+                bottom: 4%;
+                right: 20%;
+                z-index: 995;
+            }
+            #pagination a
+            {
+                text-decoration: none;
+                color: #000;
+                font-size: 70px;
+                margin: 0 30px;
+                transition: 0.5s;
+            }
+            #pagination a:hover
+            {
+                color: #165397;
+            }
             /* lines */
             #line1,#line2
             {
@@ -329,7 +306,8 @@
                 margin-bottom: 50px;
                 text-transform: uppercase;
                 margin-top: 50px;
-                }
+            }
+            
                 </style>
                  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
                 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
