@@ -97,12 +97,14 @@
                     <div>
                     <center><label for="password">Tairrain</label></center>
                     <center>
-                    <select select class="selectpicker" data-width="100%" name="tairrain">
+                    <select onchange="val()" select id="select-terrain" class="selectpicker" data-width="100%" name="tairrain">
                         <option selected>Tairrain</option>
                         {% for stad in ter %}
-                        <option value="{{ stad['id'] }}">{{ stad['nom'] }}</option>
+                        <option value="{{ stad['id'] }}" nom="{{stad['nom']}}" prix="{{stad['prix']}}">{{ stad['nom'] }}</option>
                         {% endfor%}
                       </select>
+                      <input type="hidden" name="prix" id="prix_hidden" value="">
+                      <input type="hidden" name="nom" id="nom_hidden" value="">
                       </center>
                       </div>
                         <div class="form-group">
@@ -118,14 +120,13 @@
                       <div class="form-group">
                         <center><label >heure de reservation</label></center>
                         <input
-                          type="time"
+                          type="number"
                           min="0"
                           max="23"
                           class="form-control"
                           id="username"
                           name="heure_reservation"
                           placeholder="entrer la date de reservation"
-                          min="09:00" max="18:00"
                         />
                   </div>
                   <br/>
@@ -348,5 +349,31 @@
 <!-- (Optional) Latest compiled and minified JavaScript translation files -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/i18n/defaults-*.min.js"></script>
                 
+
+<script>
+
+function val() {
+
+
+    
+     prix = document.getElementById("select-terrain").getAttribute("prix");
+     nom = document.getElementById("select-terrain").getAttribute("nom");
+
+}
+
+var e = document.getElementById("select-terrain");
+function onChange() {
+  var value = e.value;
+  var nom = e.options[e.selectedIndex].getAttribute("nom");
+  var prix = e.options[e.selectedIndex].getAttribute("prix");
+
+  document.getElementById('prix_hidden').value=prix;
+  document.getElementById('nom_hidden').value=nom ;
+
+}
+e.onchange = onChange;
+</script>
+
+</script>
     </body>
 </html>

@@ -65,13 +65,20 @@
           </nav>
           <section id="team" class="pb-5">
             <h5 class="section-title h1">liste des terrains</h5>
-            <form class="form-inline">
-                <div class="form-group">
-                  <label for="inputPassword2" class="sr-only">Password</label>
-                  <input type="text" class="form-control" id="inputPassword2" placeholder="Password">
-                </div>
-                <button type="submit" class="btn btn-primary ">chercher</button>
-              </form>
+            <div class="container ">
+                {% if msg is defined %}
+                <div class="alert alert-warning" role="alert">
+                    <p >{{ msg }}</p>
+                  </div>
+                {% endif %}
+                    <form action="/listeTairrains" class="lign-items-center">
+                        <div class="form-outline">
+                            <input type="search" name="search" class="form-control" placeholder="rechercher un terrain" />                          </div>
+                    </form>
+            </div>
+            <br>
+            <br>
+
             <div class="container">
                 <div class="row">
                     <!-- ./Team member -->

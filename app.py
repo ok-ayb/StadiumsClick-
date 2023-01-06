@@ -6,21 +6,19 @@ from werkzeug.utils import secure_filename
 import os
 from flask import send_from_directory
 from flask import jsonify
+import stripe
+
 #import stripe
 
 
 app = Flask(__name__)
 app.secret_key = "super secret key"
 bcrypt = Bcrypt(app)
-#stripe_keys = {
- #       "secret_key": os.environ["STRIPE_SECRET_KEY"],
-  #      "publishable_key": os.environ["STRIPE_PUBLISHABLE_KEY"],
-    #}
-#stripe.api_key = stripe_keys["secret_key"]
 
 app.config['MYSQL_HOST'] = "localhost"
 app.config['MYSQL_USER'] = "root"
 app.config['MYSQL_PASSWORD'] = ""
+
 app.config['MYSQL_DB'] = "stadiumsclick"
 app.config['UPLOAD_FOLDER'] = "./upload"
 app.config['MAX_CONTENT_PATH'] = 200000
@@ -28,11 +26,22 @@ app.config['MAX_CONTENT_PATH'] = 200000
 mysql=MySQL(app)
 
 
+
+stripe_keys = {
+    "secret_key": "sk_test_ZWLlRr2JEEsMD6oxW9twwgd9",
+    "publishable_key": "pk_test_1BtqfTxaJWB4D4BcWQCQGBG1",
+}
+
+stripe.api_key = "sk_test_ZWLlRr2JEEsMD6oxW9twwgd9"
+
+
+
+
 @app.route('/signeUp',methods=['POST','GET'])
 def signeUp_page():
     #check if user is connected
     if session.get('loggedin', False) == True:
-        return  redirect("/addTer")
+        return  redirect("/listeTairrains")
     errors=[]
     if request.method == 'GET':
         return render_template("signeUp.html")
@@ -73,7 +82,7 @@ def club_page():
 def login():
     #check if user is connected
     if session.get('loggedin', False) == True:
-        return  redirect("/addTer")
+        return  redirect("/listeTairrainss")
 
     errors = []
     if request.method == 'GET':
@@ -98,7 +107,7 @@ def login():
             session['email'] = user['email']
             session['isadmin'] = user['isadmin']
             msg = 'Logged in successfully !'
-            return redirect('/addTer')
+            return redirect('/listeTairrains')
     else:
             msg = 'Incorrect username / password !'
     return render_template('Login.html', msg = msg)
@@ -155,26 +164,43 @@ def logout():
 @app.route('/listeTairrains',methods=['GET','POST'])
 def listeTairrains():
     #verifier si l admin et connecter ou bien non 
+    if session.get('loggedin', False) == False:
+        return  redirect("/Login")
     isadmin=session.get('isadmin',0)
+    search = request.args.get('search',"")
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute('SELECT * FROM terrains')
+    if search == "":
+        cursor.execute('SELECT * FROM terrains')
+    else: 
+        term = "%{}%".format(search)
+        cursor.execute('SELECT * FROM `terrains` WHERE nom LIKE %s',[term])
     results = cursor.fetchall()
+    if len(results) == 0: 
+        msg = "Aucun terrain qui correspond à la recherche: " + search 
+        return render_template('listeTerrains.html',liste=results,isadmin=isadmin,msg=msg)
     return render_template('listeTerrains.html',liste=results,isadmin=isadmin)
+
 
 @app.route('/reservation',methods=['GET','POST'])
 def reservation():
     errors=[]
+    isadmin=session.get('isadmin',0)
     if session.get('loggedin', False) == False:
         return  redirect("/Login")
     if request.method == 'GET':
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         cursor.execute('SELECT * FROM terrains')
         results = cursor.fetchall()
-        return render_template("reservation.html",ter=results)
+        if request.args.get("ok","0") == "1" : 
+            msg = "la reservation a été bien effectuée"
+            return render_template("reservation.html",ter=results,msg=msg,isadmin=isadmin)
+        else:
+            return render_template("reservation.html",ter=results,isadmin=isadmin)
     else:
         user_id = session.get('id',0)
-        isadmin=session.get('isadmin',0)
         tairrain =  request.form.get('tairrain')
+        prix = request.form.get('prix')
+        nom = request.form.get('nom')
         date_reservation = request.form['date_reservation']
         heure_reservation = request.form['heure_reservation']
         nom_reservation = request.form['nom_reservation']
@@ -189,7 +215,6 @@ def reservation():
         errors.append("SVP entrer le nom de reservation")
     if len(errors)>0 : 
         return render_template("reservation.html",errors=errors)
-    
     cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     # had query ka ta7sseb ch7al men reservation 3andna ldak terrain f dik la date w heure
     cur.execute('SELECT COUNT(*) as deja_reserve FROM reservation WHERE id_terrain = %s AND date=%s and heure=%s ',(tairrain,date_reservation,heure_reservation )) # terrain machi tairrain
@@ -201,8 +226,25 @@ def reservation():
     else:
         cur.execute('INSERT INTO reservation VALUES (NULL, %s,%s, %s, %s, %s)', (user_id, tairrain, date_reservation, heure_reservation, nom_reservation))
         mysql.connection.commit()
-        msg = 'la reservation et bien effectuer'
-        return render_template("reservation.html",msg=msg,isadmin=isadmin)
+        checkout_session = stripe.checkout.Session.create(
+        line_items=[
+            {
+                'price_data': {
+                    'product_data': {
+                        'name': "reservation terrain " + nom ,
+                    },
+                    'unit_amount': int(float(prix))*100,
+                    'currency': 'mad',
+                },
+                'quantity': 1,
+            },
+        ],
+        payment_method_types=['card'],
+        mode='payment',
+        success_url=request.host_url + '/reservation?ok=1',
+        cancel_url=request.host_url + '/reservation',
+    )
+    return redirect(checkout_session.url)
 
 
 
@@ -290,5 +332,4 @@ def delete_match():
         #return jsonify(test)
     message='suppression bien effectuer'
     return render_template("listePosts.html", message=message)
-
 
