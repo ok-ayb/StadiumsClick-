@@ -6,11 +6,17 @@ from werkzeug.utils import secure_filename
 import os
 from flask import send_from_directory
 from flask import jsonify
+#import stripe
 
 
 app = Flask(__name__)
 app.secret_key = "super secret key"
 bcrypt = Bcrypt(app)
+#stripe_keys = {
+ #       "secret_key": os.environ["STRIPE_SECRET_KEY"],
+  #      "publishable_key": os.environ["STRIPE_PUBLISHABLE_KEY"],
+    #}
+#stripe.api_key = stripe_keys["secret_key"]
 
 app.config['MYSQL_HOST'] = "localhost"
 app.config['MYSQL_USER'] = "root"
@@ -188,7 +194,7 @@ def reservation():
     # had query ka ta7sseb ch7al men reservation 3andna ldak terrain f dik la date w heure
     cur.execute('SELECT COUNT(*) as deja_reserve FROM reservation WHERE id_terrain = %s AND date=%s and heure=%s ',(tairrain,date_reservation,heure_reservation )) # terrain machi tairrain
     result = cur.fetchone()
-    # ka n7ato resultats f deja_reservé donc yla kant 3anda chi 7aja kbar men zeo ra
+    # ka n7ato resultats f deja_reservé donc yla kant 3anda chi 7aja kbar men 
     if result["deja_reserve"] != 0:
          message = 'date et heure est deja reservé svr choisir une autre heure ou une autre date'
          return render_template("reservation.html",isadmin=isadmin,message=message)
@@ -284,3 +290,5 @@ def delete_match():
         #return jsonify(test)
     message='suppression bien effectuer'
     return render_template("listePosts.html", message=message)
+
+
