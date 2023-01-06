@@ -1,6 +1,6 @@
 function doThing(event) {
     event.preventDefault();
-    window.confirm('Do you want to do?') ? 
+    window.confirm('test?') ? 
       window.location.href = '/delete' :
       null;
   };

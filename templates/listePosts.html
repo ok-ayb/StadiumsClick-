@@ -72,7 +72,7 @@
           {% if message is defined %}
           <div class="alert alert-success" role="alert">
               <p >{{ message }}</p>
-              <a class="fas fa-check-circle" href="delete" >retour à la page précédente</a>
+              <a class="fas fa-check-circle" href="listePost" >retour à la page précédente</a>
             </div>
           {% endif %}
          
@@ -107,7 +107,7 @@
                                       <hr>
                                       <form action="/delete" method="post">
                                           <input type="hidden" value="{{ post['post.id'] }}" name="ok">
-                                          <button type="submit"  class="btn btn-danger"   onclick="return confirm('Are you sure?')" >supprimer</button>
+                                          <button type="submit"  class="btn btn-danger"   onclick="return confirm('vous etes sur?')">supprimer</button>
                                           </form>
                                   </div>
                               </div>
